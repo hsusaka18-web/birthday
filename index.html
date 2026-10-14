@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday Website</title>
+    <!-- Google Fonts for cute styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Pyidaungsu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            unicode-bidi: plaintext;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f3e7e8 0%, #e3d5ef 100%);
+            font-family: 'Fredoka', 'Pyidaungsu', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #4a2e5c;
+            padding: 10px;
+        }
+
+        /* Music Control Container to prevent border overlapping */
+        .music-nav-bar {
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .music-control {
+            background: #7c529b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+        }
+
+        .music-control:hover {
+            background: #5d3570;
+        }
+
+        .outer-main-frame {
+            width: 100%;
+            max-width: 720px;
+            height: 480px;
+            background: linear-gradient(135deg, #7c529b 0%, #4a2e5c 100%);
+            border-radius: 24px;
+            padding: 10px;
+            box-shadow: 0 15px 35px rgba(90, 60, 100, 0.25);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            background: #fbf6f8;
+            border-radius: 16px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            overflow: hidden;
+        }
+
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .page.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        @keyframes scaleUp {
+            0% { transform: scale(0.3); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes bounceSlow {
+            0% { transform: translateY(-100px); opacity: 0; }
+            60% { transform: translateY(8px); opacity: 1; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeInSlide {
+            0% { transform: translateY(25px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .animate-scale {
+            animation: scaleUp 1.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animate-bounce-down {
+            animation: bounceSlow 2.0s ease forwards;
+        }
+
+        .animate-fade {
+            animation: fadeInSlide 1.8s ease forwards;
+        }
+
+        .title-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #5d3570;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(93, 53, 112, 0.1);
+        }
+
+        .subtitle-text {
+            font-size: 0.95rem;
+            color: #8a6a9c;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .cake-img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .cake-img:hover {
+            transform: scale(1.1);
+        }
+
+        .menu-grid {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .menu-card {
+            width: 115px;
+            height: 115px;
+            background: #d8c4e8;
+            border-radius: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border: 3px solid #fff;
+            transition: all 0.3s ease;
+        }
+
+        .menu-card img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-6px);
+            background: #cbb0df;
+        }
+
+        .back-btn {
+            position: absolute;
+            bottom: 12px;
+            right: 18px;
+            background: #5d3570;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 18px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .back-btn:hover {
+            background: #462254;
+        }
+
+        .music-content {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .balloons-box {
+            width: 38%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .balloons-box img {
+            width: 140px;
+            object-fit: contain;
+        }
+
+        .youtube-card-box {
+            width: 55%;
+            max-width: 360px;
+            background: #5d3570;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(93, 53, 112, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-align: center;
+        }
+
+        .yt-title {
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .yt-link-btn {
+            background: #ff0000;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+            transition: transform 0.2s, background 0.2s;
+            display: inline-block;
+        }
+
+        .yt-link-btn:hover {
+            transform: scale(1.05);
+            background: #e60000;
+        }
+
+        /* Page 4: Photo Layout */
+        .photo-layout {
+            display: flex;
+            width: 90%;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .side-photos {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .polaroid-sm {
+            width: 115px;
+            height: 120px;
+            background: white;
+            padding: 4px 4px 6px 4px;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            transform: rotate(-3deg);
+        }
+
+        .polaroid-sm:nth-child(even) {
+            transform: rotate(3deg);
+        }
+
+        .polaroid-sm img {
+            width: 100%;
+            height: 98px;
+            object-fit: cover;
+        }
+
+        .strip-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #5d3570;
+            padding: 10px;
+            border-radius: 12px;
+            gap: 8px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            width: 135px;
+        }
+
+        .strip-box img {
+            width: 115px;
+            height: 85px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Page 5: Letter Layout */
+        .letter-layout {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .letter-photos {
+            width: 42%;
+            position: relative;
+            height: 100%;
+        }
+
+        .floating-pola {
+            position: absolute;
+            width: 115px;
+            background: white;
+            padding: 4px 4px 6px 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+
+        .floating-pola img {
+            width: 100%;
+            height: 96px;
+            object-fit: cover;
+        }
+
+        .pola-1 { top: 35px; left: 10px; transform: rotate(-6deg); }
+        .pola-2 { top: 75px; left: 75px; transform: rotate(4deg); z-index: 2; }
+        .pola-3 { top: 165px; left: 20px; transform: rotate(-3deg); z-index: 3; }
+        .pola-4 { top: 205px; left: 85px; transform: rotate(5deg); z-index: 4; }
+
+        .letter-text-box {
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .letter-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #5d3570;
+            margin-bottom: 10px;
+        }
+
+        .letter-body {
+            font-size: 0.78rem;
+            color: #554360;
+            line-height: 1.45;
+            height: 190px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            .music-nav-bar {
+                max-width: 95%;
+            }
+            .outer-main-frame {
+                width: 96%;
+                height: 84vh;
+                min-height: 460px;
+                padding: 6px;
+            }
+            .container {
+                padding: 10px;
+            }
+            .title-text { font-size: 1.25rem; }
+            .subtitle-text { font-size: 0.85rem; margin-bottom: 10px; }
+            .menu-card { width: 90px; height: 90px; }
+            .menu-card img { width: 60px; height: 60px; }
+            .music-content { flex-direction: column; gap: 10px; }
+            .balloons-box, .youtube-card-box { width: 100%; max-width: 100%; }
+            .balloons-box img { width: 95px; }
+            .youtube-card-box { padding: 15px; gap: 10px; }
+            
+            /* Page 4 Mobile */
+            .photo-layout { gap: 10px; width: 100%; }
+            .polaroid-sm { width: 85px; height: 95px; padding: 3px 3px 5px 3px; }
+            .polaroid-sm img { height: 75px; }
+            .strip-box { width: 120px; padding: 6px; gap: 5px; }
+            .strip-box img { width: 104px; height: 70px; }
+
+            /* Page 5 Mobile Final Fix: No scroll, fits all text without gap */
+            .letter-layout {
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                gap: 4px;
+                padding-top: 2px;
+                width: 100%;
+                height: 100%;
+            }
+            .letter-photos {
+                width: 100%;
+                height: 48px;
+                position: relative;
+                display: flex;
+                justify-content: center;
+                gap: 5px;
+                margin-bottom: 0px;
+            }
+            .floating-pola {
+                position: static;
+                width: 52px;
+                height: 46px;
+                padding: 2px;
+                transform: none !important;
+            }
+            .floating-pola img {
+                height: 36px;
+            }
+            .letter-text-box {
+                width: 100%;
+                height: auto;
+            }
+            .letter-title {
+                font-size: 0.95rem;
+                margin-bottom: 2px;
+                text-align: center;
+            }
+            .letter-body {
+                height: auto;
+                max-height: none;
+                font-size: 0.64rem;
+                line-height: 1.35;
+                overflow-y: visible;
+                padding-right: 0px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Music Audio Player & Button Navbar -->
+    <div class="music-nav-bar">
+        <button class="music-control" onclick="toggleMusic()">🎵 Music: Off</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="foru.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="outer-main-frame">
+        <div class="container">
+
+            <!-- Page 1: Home / Cake Page -->
+            <div id="page1" class="page active">
+                <h1 class="title-text">HAPPY BIRTHDAY *NAME*</h1>
+                <p class="subtitle-text">Click the cake for your surprise !</p>
+                <img src="cake.jpg" alt="Birthday Cake" class="cake-img animate-scale" onclick="goToPage('page2')">
+            </div>
+
+            <!-- Page 2: Menu Page -->
+            <div id="page2" class="page">
+                <h1 class="title-text" style="font-size: 1.5rem; margin-bottom: 4px;">THESE ARE FOR YOU</h1>
+                <p class="subtitle-text">Click to open!</p>
+                <div class="menu-grid">
+                    <div class="menu-card animate-scale" style="animation-delay: 0.2s;" onclick="goToPage('page3')">
+                        <img src="music.jpg" alt="Music">
+                    </div>
+                    <div class="menu-card animate-scale" style="animation-delay: 0.4s;" onclick="goToPage('page4')">
+                        <img src="camera.jpg" alt="Camera">
+                    </div>
+                    <div class="menu-card animate-scale" style="animation-delay: 0.6s;" onclick="goToPage('page5'); startTyping();">
+                        <img src="en.jpg" alt="Letter">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 3: Music Page -->
+            <div id="page3" class="page">
+                <div class="music-content">
+                    <div class="balloons-box">
+                        <img src="ballon.jpg" alt="Balloons" class="animate-bounce-down">
+                    </div>
+                    <div class="youtube-card-box animate-fade">
+                        <div class="yt-title">🎵 I think of you the most🎵</div>
+                        <p style="color: #e2d1f0; font-size: 0.85rem;">သီချင်းနားထောင်ရန် အောက်ပါခလုတ်ကို နှိပ်ပါ</p>
+                        <a href="https://youtu.be/mVdKu8rih78?list=RDmVdKu8rih78" target="_blank" class="yt-link-btn">▶ Watch on YouTube</a>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goToPage('page2')">Back</button>
+            </div>
+
+            <!-- Page 4: Camera / Photos Page -->
+            <div id="page4" class="page">
+                <div class="photo-layout">
+                    <div class="side-photos animate-fade">
+                        <div class="polaroid-sm"><img src="a.jpg" alt="Photo"></div>
+                        <div class="polaroid-sm"><img src="b.jpg" alt="Photo"></div>
+                    </div>
+
+                    <div class="strip-box animate-scale">
+                        <img src="e.jpg" alt="Strip">
+                        <img src="c.jpg" alt="Strip">
+                        <img src="f.jpg" alt="Strip">
+                    </div>
+
+                    <div class="side-photos animate-fade">
+                        <div class="polaroid-sm"><img src="e.jpg" alt="Photo"></div>
+                        <div class="polaroid-sm"><img src="f.jpg" alt="Photo"></div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goToPage('page2')">Back</button>
+            </div>
+
+            <!-- Page 5: Letter Page -->
+            <div id="page5" class="page">
+                <div class="letter-layout">
+                    <div class="letter-photos">
+                        <div class="floating-pola pola-1 animate-scale"><img src="a.jpg" alt="Pic"></div>
+                        <div class="floating-pola pola-2 animate-scale" style="animation-delay: 0.3s;"><img src="b.jpg" alt="Pic"></div>
+                        <div class="floating-pola pola-3 animate-scale" style="animation-delay: 0.6s;"><img src="c.jpg" alt="Pic"></div>
+                        <div class="floating-pola pola-4 animate-scale" style="animation-delay: 0.9s;"><img src="d.jpg" alt="Pic"></div>
+                    </div>
+                    <div class="letter-text-box">
+                        <h2 class="letter-title">Happy Birthday to my sweetest little person! 🎂💖</h2>
+                        <div class="letter-body" id="typingText"></div>
+                    </div>
+                </div>
+                <button class="back-btn" onclick="goToPage('page2')">Back</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function goToPage(pageId) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        // Background Music Toggle Logic
+        let isMusicPlaying = false;
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const btn = document.querySelector('.music-control');
+            if (isMusicPlaying) {
+                music.pause();
+                btn.innerHTML = "🎵 Music: Off";
+                isMusicPlaying = false;
+            } else {
+                music.play().catch(e => console.log("Audio play blocked"));
+                btn.innerHTML = "🎶 Music: On";
+                isMusicPlaying = true;
+            }
+        }
+
+        const message = ` You bring so much joy and happiness into my life every single day. Watching you smile is my most favorite thing in the world, and I just want to make you feel as special as you truly are. I hope today is filled with lots of love, sweet surprises, and everything that makes you happy. May all your dreams come true, my cutie! 🌸✨`;
+
+        let charIndex = 0;
+        let isTypingStarted = false;
+
+        function startTyping() {
+            if (isTypingStarted) return;
+            isTypingStarted = true;
+            const textContainer = document.getElementById('typingText');
+            textContainer.innerHTML = "";
+            charIndex = 0;
+
+            function type() {
+                if (charIndex < message.length) {
+                    if (message.charAt(charIndex) === '\n') {
+                        textContainer.innerHTML += '<br>';
+                    } else {
+                        textContainer.innerHTML += message.charAt(charIndex);
+                    }
+                    charIndex++;
+                    setTimeout(type, 35);
+                }
+            }
+            type();
+        }
+    </script>
+</body>
+</html>
